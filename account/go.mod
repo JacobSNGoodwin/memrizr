@@ -1,4 +1,4 @@
-module github.com/jacobsngoodwin/memrizr
+module github.com/jacobsngoodwin/memrizr/account
 
 go 1.14
 
