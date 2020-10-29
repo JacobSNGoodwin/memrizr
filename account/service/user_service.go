@@ -33,3 +33,9 @@ func (s *UserService) Get(ctx context.Context, uid uuid.UUID) (*model.User, erro
 
 	return u, err
 }
+
+// Signup reaches our to a UserRepository to verify the
+// email address is available and signs up the user if this is the case
+func (s *UserService) Signup(ctx context.Context, u *model.User) error {
+	panic("Method not implemented")
+}
