@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jacobsngoodwin/memrizr/model"
+	"github.com/jacobsngoodwin/memrizr/account/model"
 )
 
 // UserService acts as a struct for injecting an implementation of UserRepository
