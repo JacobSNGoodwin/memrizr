@@ -4,6 +4,9 @@ This is the repository for the Memrizr memorization application tutorial which i
 
 You can find my written tutorials on my [dev.to feed](https://dev.to/jacobsngoodwin).
 
+For the complete "prototype" of this application (I'm making several changes in this tutorial), check out the [wordmem repo](https://github.com/JacobSNGoodwin/wordmem).
+
+## Application Overview
 A chart of the tools and applications used in this tutorial is given below.
 
 ![App Overview](./application_overview.png)
