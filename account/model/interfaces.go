@@ -19,6 +19,7 @@ type UserService interface {
 // with in regards to producing JWTs as string
 type TokenService interface {
 	NewPairFromUser(ctx context.Context, u *User, prevTokenID string) (*TokenPair, error)
+	ValidateIDToken(tokenString string) (*User, error)
 }
 
 // UserRepository defines methods the service layer expects
