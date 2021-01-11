@@ -92,13 +92,13 @@ func TestNewPairFromUser(t *testing.T) {
 		mockTokenRepository.AssertCalled(t, "DeleteRefreshToken", deleteWithPrevIDArguments...)
 
 		var s string
-		assert.IsType(t, s, tokenPair.IDToken)
+		assert.IsType(t, s, tokenPair.IDToken.SS)
 
 		// decode the Base64URL encoded string
 		// simpler to use jwt library which is already imported
-		idTokenClaims := &IDTokenCustomClaims{}
+		idTokenClaims := &idTokenCustomClaims{}
 
-		_, err = jwt.ParseWithClaims(tokenPair.IDToken, idTokenClaims, func(token *jwt.Token) (interface{}, error) {
+		_, err = jwt.ParseWithClaims(tokenPair.IDToken.SS, idTokenClaims, func(token *jwt.Token) (interface{}, error) {
 			return pubKey, nil
 		})
 
@@ -127,12 +127,12 @@ func TestNewPairFromUser(t *testing.T) {
 		expectedExpiresAt := time.Now().Add(time.Duration(idExp) * time.Second)
 		assert.WithinDuration(t, expectedExpiresAt, expiresAt, 5*time.Second)
 
-		refreshTokenClaims := &RefreshTokenCustomClaims{}
-		_, err = jwt.ParseWithClaims(tokenPair.RefreshToken, refreshTokenClaims, func(token *jwt.Token) (interface{}, error) {
+		refreshTokenClaims := &refreshTokenCustomClaims{}
+		_, err = jwt.ParseWithClaims(tokenPair.RefreshToken.SS, refreshTokenClaims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(secret), nil
 		})
 
-		assert.IsType(t, s, tokenPair.RefreshToken)
+		assert.IsType(t, s, tokenPair.RefreshToken.SS)
 
 		// assert claims on refresh token
 		assert.NoError(t, err)
