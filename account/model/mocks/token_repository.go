@@ -39,3 +39,16 @@ func (m *MockTokenRepository) DeleteRefreshToken(ctx context.Context, userID str
 
 	return r0
 }
+
+// DeleteUserRefreshTokens mocks concrete DeleteUserRefreshToken
+func (m *MockTokenRepository) DeleteUserRefreshTokens(ctx context.Context, userID string) error {
+	ret := m.Called(ctx, userID)
+
+	var r0 error
+
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(error)
+	}
+
+	return r0
+}

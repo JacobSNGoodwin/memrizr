@@ -57,3 +57,30 @@ func (r *redisTokenRepository) DeleteRefreshToken(ctx context.Context, userID st
 
 	return nil
 }
+
+// DeleteUserRefreshTokens looks for all tokens beginning with
+// userID and scans to delete them in a non-blocking fashion
+func (r *redisTokenRepository) DeleteUserRefreshTokens(ctx context.Context, userID string) error {
+	pattern := fmt.Sprintf("%s*", userID)
+
+	iter := r.Redis.Scan(ctx, 0, pattern, 5).Iterator()
+	failCount := 0
+
+	for iter.Next(ctx) {
+		if err := r.Redis.Del(ctx, iter.Val()).Err(); err != nil {
+			log.Printf("Failed to delete refresh token: %s\n", iter.Val())
+			failCount++
+		}
+	}
+
+	// check last value
+	if err := iter.Err(); err != nil {
+		log.Printf("Failed to delete refresh token: %s\n", iter.Val())
+	}
+
+	if failCount > 0 {
+		return apperrors.NewInternal()
+	}
+
+	return nil
+}
