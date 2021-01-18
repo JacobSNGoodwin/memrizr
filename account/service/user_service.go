@@ -90,3 +90,20 @@ func (s *userService) Signin(ctx context.Context, u *model.User) error {
 	*u = *uFetched
 	return nil
 }
+
+func (s *userService) UpdateDetails(ctx context.Context, u *model.User) error {
+	// Update user in UserRepository
+	err := s.UserRepository.Update(ctx, u)
+
+	if err != nil {
+		return err
+	}
+
+	// // Publish user updated
+	// err = s.EventsBroker.PublishUserUpdated(u, false)
+	// if err != nil {
+	// 	return apperrors.NewInternal()
+	// }
+
+	return nil
+}
