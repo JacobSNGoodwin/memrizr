@@ -44,7 +44,11 @@ make init
 
 ### Add Cloud Key
 
-*I will add instructions when we reach this point of the application*
+In order to access Google Cloud for storing profile images, you will need to download a service account JSON file to your `account` application folder and call it `serviceAccount.json`. This file will be references in .env.dev.
+
+Instructions for installing the Google Cloud Storage Client and getting this key are found at:
+
+[https://cloud.google.com/storage/docs/reference/libraries](https://cloud.google.com/storage/docs/reference/libraries)
 
 ### Run
 
