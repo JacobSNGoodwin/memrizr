@@ -50,7 +50,8 @@ func (r *gcImageRepository) UpdateProfile(
 	}
 
 	imageURL := fmt.Sprintf(
-		"https://storage.googleapis.com/memrizr_profile_images/%s",
+		"https://storage.googleapis.com/%s/%s",
+		r.BucketName,
 		objName,
 	)
 
