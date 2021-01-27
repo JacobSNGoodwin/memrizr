@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"mime/multipart"
 
 	"github.com/google/uuid"
 	"github.com/jacobsngoodwin/memrizr/account/model"
@@ -69,4 +70,27 @@ func (m *MockUserService) UpdateDetails(ctx context.Context, u *model.User) erro
 	}
 
 	return r0
+}
+
+// SetProfileImage is a mock of UserService.SetProfileImage
+func (m *MockUserService) SetProfileImage(
+	ctx context.Context,
+	uid uuid.UUID,
+	imageFileHeader *multipart.FileHeader,
+) (*model.User, error) {
+	ret := m.Called(ctx, uid, imageFileHeader)
+
+	// first value passed to "Return"
+	var r0 *model.User
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(*model.User)
+	}
+
+	var r1 error
+
+	if ret.Get(1) != nil {
+		r1 = ret.Get(1).(error)
+	}
+
+	return r0, r1
 }
