@@ -42,13 +42,25 @@ make init
 
 *If any of you has scripting skills, please submit a PR and I'll update this! It make require pinging, or adding some script into, the Postgres container(s)*
 
-### Add Cloud Key
+### Google Cloud Key
 
 In order to access Google Cloud for storing profile images, you will need to download a service account JSON file to your `account` application folder and call it `serviceAccount.json`. This file will be references in .env.dev.
 
 Instructions for installing the Google Cloud Storage Client and getting this key are found at:
 
 [https://cloud.google.com/storage/docs/reference/libraries](https://cloud.google.com/storage/docs/reference/libraries)
+
+### Google Cloud Storage Config
+
+With access to your Google Cloud project, you will also need to [create a cloud storage bucket](https://cloud.google.com/storage/docs/creating-buckets) for storing the user's profile image. 
+
+This bucket name must be unique across Google Cloud projects. 
+
+You will then need to [make all bucket objects public](https://cloud.google.com/storage/docs/access-control/making-data-public#buckets) which will allow a public URL to be created for each profile iamge. 
+
+Finally, you will need to provide the unique bucket name to the `account/.env.dev` file 
+
+`GC_IMAGE_BUCKET=my_uniquebucket_name`
 
 ### Run
 
