@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jacobsngoodwin/memrizr/account/model"
 	"github.com/jacobsngoodwin/memrizr/account/model/apperrors"
+	"github.com/jacobsngoodwin/memrizr/account/model/fixture"
 	"github.com/jacobsngoodwin/memrizr/account/model/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -254,4 +255,278 @@ func TestUpdateDetails(t *testing.T) {
 
 		mockUserRepository.AssertCalled(t, "Update", mockArgs...)
 	})
+}
+
+func TestSetProfileImage(t *testing.T) {
+	mockUserRepository := new(mocks.MockUserRepository)
+	mockImageRepository := new(mocks.MockImageRepository)
+
+	us := NewUserService(&USConfig{
+		UserRepository:  mockUserRepository,
+		ImageRepository: mockImageRepository,
+	})
+
+	t.Run("Successful new image", func(t *testing.T) {
+		uid, _ := uuid.NewRandom()
+
+		// does not have have imageURL
+		mockUser := &model.User{
+			UID:     uid,
+			Email:   "new@bob.com",
+			Website: "https://jacobgoodwin.me",
+			Name:    "A New Bob!",
+		}
+
+		findByIDArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			uid,
+		}
+		mockUserRepository.On("FindByID", findByIDArgs...).Return(mockUser, nil)
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		imageFile, _ := imageFileHeader.Open()
+
+		updateProfileArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("string"),
+			imageFile,
+		}
+
+		imageURL := "http://imageurl.com/jdfkj34kljl"
+
+		mockImageRepository.
+			On("UpdateProfile", updateProfileArgs...).
+			Return(imageURL, nil)
+
+		updateImageArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mockUser.UID,
+			imageURL,
+		}
+
+		mockUpdatedUser := &model.User{
+			UID:      uid,
+			Email:    "new@bob.com",
+			Website:  "https://jacobgoodwin.me",
+			Name:     "A New Bob!",
+			ImageURL: imageURL,
+		}
+
+		mockUserRepository.
+			On("UpdateImage", updateImageArgs...).
+			Return(mockUpdatedUser, nil)
+
+		ctx := context.TODO()
+
+		updatedUser, err := us.SetProfileImage(ctx, mockUser.UID, imageFileHeader)
+
+		assert.NoError(t, err)
+		assert.Equal(t, mockUpdatedUser, updatedUser)
+		mockUserRepository.AssertCalled(t, "FindByID", findByIDArgs...)
+		mockImageRepository.AssertCalled(t, "UpdateProfile", updateProfileArgs...)
+		mockUserRepository.AssertCalled(t, "UpdateImage", updateImageArgs...)
+	})
+
+	t.Run("Successful update image", func(t *testing.T) {
+		uid, _ := uuid.NewRandom()
+		imageURL := "http://imageurl.com/jdfkj34kljl"
+
+		// has imageURL
+		mockUser := &model.User{
+			UID:      uid,
+			Email:    "new@bob.com",
+			Website:  "https://jacobgoodwin.me",
+			Name:     "A New Bob!",
+			ImageURL: imageURL,
+		}
+
+		findByIDArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			uid,
+		}
+		mockUserRepository.On("FindByID", findByIDArgs...).Return(mockUser, nil)
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		imageFile, _ := imageFileHeader.Open()
+
+		updateProfileArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("string"),
+			imageFile,
+		}
+
+		mockImageRepository.
+			On("UpdateProfile", updateProfileArgs...).
+			Return(imageURL, nil)
+
+		updateImageArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mockUser.UID,
+			imageURL,
+		}
+
+		mockUpdatedUser := &model.User{
+			UID:      uid,
+			Email:    "new@bob.com",
+			Website:  "https://jacobgoodwin.me",
+			Name:     "A New Bob!",
+			ImageURL: imageURL,
+		}
+
+		mockUserRepository.
+			On("UpdateImage", updateImageArgs...).
+			Return(mockUpdatedUser, nil)
+
+		ctx := context.TODO()
+
+		updatedUser, err := us.SetProfileImage(ctx, uid, imageFileHeader)
+
+		assert.NoError(t, err)
+		assert.Equal(t, mockUpdatedUser, updatedUser)
+		mockUserRepository.AssertCalled(t, "FindByID", findByIDArgs...)
+		mockImageRepository.AssertCalled(t, "UpdateProfile", updateProfileArgs...)
+		mockUserRepository.AssertCalled(t, "UpdateImage", updateImageArgs...)
+	})
+
+	t.Run("UserRepository FindByID Error", func(t *testing.T) {
+		uid, _ := uuid.NewRandom()
+
+		findByIDArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			uid,
+		}
+		mockError := apperrors.NewInternal()
+		mockUserRepository.On("FindByID", findByIDArgs...).Return(nil, mockError)
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+
+		ctx := context.TODO()
+
+		updatedUser, err := us.SetProfileImage(ctx, uid, imageFileHeader)
+
+		assert.Error(t, err)
+		assert.Nil(t, updatedUser)
+		mockUserRepository.AssertCalled(t, "FindByID", findByIDArgs...)
+		mockImageRepository.AssertNotCalled(t, "UpdateProfile")
+		mockUserRepository.AssertNotCalled(t, "UpdateImage")
+	})
+
+	t.Run("ImageRepository Error", func(t *testing.T) {
+		// need to create a new UserService and repository
+		// because testify has no way to overwrite a mock's
+		// "On" call.
+		mockUserRepository := new(mocks.MockUserRepository)
+		mockImageRepository := new(mocks.MockImageRepository)
+
+		us := NewUserService(&USConfig{
+			UserRepository:  mockUserRepository,
+			ImageRepository: mockImageRepository,
+		})
+
+		uid, _ := uuid.NewRandom()
+		imageURL := "http://imageurl.com/jdfkj34kljl"
+
+		// has imageURL
+		mockUser := &model.User{
+			UID:      uid,
+			Email:    "new@bob.com",
+			Website:  "https://jacobgoodwin.me",
+			Name:     "A New Bob!",
+			ImageURL: imageURL,
+		}
+
+		findByIDArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			uid,
+		}
+		mockUserRepository.On("FindByID", findByIDArgs...).Return(mockUser, nil)
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		imageFile, _ := imageFileHeader.Open()
+
+		updateProfileArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("string"),
+			imageFile,
+		}
+
+		mockError := apperrors.NewInternal()
+		mockImageRepository.
+			On("UpdateProfile", updateProfileArgs...).
+			Return(nil, mockError)
+
+		ctx := context.TODO()
+		updatedUser, err := us.SetProfileImage(ctx, uid, imageFileHeader)
+
+		assert.Nil(t, updatedUser)
+		assert.Error(t, err)
+		mockUserRepository.AssertCalled(t, "FindByID", findByIDArgs...)
+		mockImageRepository.AssertCalled(t, "UpdateProfile", updateProfileArgs...)
+		mockUserRepository.AssertNotCalled(t, "UpdateImage")
+	})
+
+	t.Run("UserRepository UpdateImage Error", func(t *testing.T) {
+		uid, _ := uuid.NewRandom()
+		imageURL := "http://imageurl.com/jdfkj34kljl"
+
+		// has imageURL
+		mockUser := &model.User{
+			UID:      uid,
+			Email:    "new@bob.com",
+			Website:  "https://jacobgoodwin.me",
+			Name:     "A New Bob!",
+			ImageURL: imageURL,
+		}
+
+		findByIDArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			uid,
+		}
+		mockUserRepository.On("FindByID", findByIDArgs...).Return(mockUser, nil)
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		imageFile, _ := imageFileHeader.Open()
+
+		updateProfileArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("string"),
+			imageFile,
+		}
+
+		mockImageRepository.
+			On("UpdateProfile", updateProfileArgs...).
+			Return(imageURL, nil)
+
+		updateImageArgs := mock.Arguments{
+			mock.AnythingOfType("*context.emptyCtx"),
+			mockUser.UID,
+			imageURL,
+		}
+
+		mockError := apperrors.NewInternal()
+		mockUserRepository.
+			On("UpdateImage", updateImageArgs...).
+			Return(nil, mockError)
+
+		ctx := context.TODO()
+
+		updatedUser, err := us.SetProfileImage(ctx, uid, imageFileHeader)
+
+		assert.Error(t, err)
+		assert.Nil(t, updatedUser)
+		mockImageRepository.AssertCalled(t, "UpdateProfile", updateProfileArgs...)
+		mockUserRepository.AssertCalled(t, "UpdateImage", updateImageArgs...)
+	})
+
+	// TODO - Create non image file for test
 }
