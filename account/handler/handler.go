@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -47,23 +46,16 @@ func NewHandler(c *Config) {
 		g.POST("/signout", middleware.AuthUser(h.TokenService), h.Signout)
 		g.PUT("/details", middleware.AuthUser(h.TokenService), h.Details)
 		g.POST("/image", middleware.AuthUser(h.TokenService), h.Image)
+		g.DELETE("/image", middleware.AuthUser(h.TokenService), h.DeleteImage)
 	} else {
 		g.GET("/me", h.Me)
 		g.POST("/signout", h.Signout)
 		g.PUT("/details", h.Details)
 		g.POST("/image", h.Image)
+		g.DELETE("/image", h.DeleteImage)
 	}
 
 	g.POST("/signup", h.Signup)
 	g.POST("/signin", h.Signin)
 	g.POST("/tokens", h.Tokens)
-
-	g.DELETE("/image", h.DeleteImage)
-}
-
-// DeleteImage handler
-func (h *Handler) DeleteImage(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"hello": "it's deleteImage",
-	})
 }

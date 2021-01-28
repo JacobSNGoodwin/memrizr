@@ -14,6 +14,18 @@ type MockUserService struct {
 	mock.Mock
 }
 
+// ClearProfileImage is a mock of UserService.ClearProfileImage
+func (m *MockUserService) ClearProfileImage(ctx context.Context, uid uuid.UUID) error {
+	ret := m.Called(ctx, uid)
+
+	var r0 error
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(error)
+	}
+
+	return r0
+}
+
 // Get is mock of UserService Get
 func (m *MockUserService) Get(ctx context.Context, uid uuid.UUID) (*model.User, error) {
 	// args that will be passed to "Return" in the tests, when function
