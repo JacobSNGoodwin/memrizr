@@ -12,6 +12,25 @@ A chart of the tools and applications used in this tutorial is given below.
 
 ![App Overview](./application_overview.png)
 
+## Cloning Tags
+
+[Tags](https://github.com/JacobSNGoodwin/memrizr/tags) are provided at the completion of each application for use as a starting point for the next application.
+
+For example, if you would like to join in for [part2](https://github.com/JacobSNGoodwin/memrizr/releases/tag/part2) where we have completed to Golang API and begin working on the Vue client, you would clone this tag as follows:
+
+```bash
+# Checkout tag, store in folder 'my_memrizr' (creating folder is optional)
+git clone https://github.com/JacobSNGoodwin/memrizr.git --branch part2 --single-branch my_memrizr
+
+# Changes into my memrizr
+cd my_memrizer
+
+# Create a master branch (or other if you wish) from this tagged version
+git switch -c master
+```
+
+You may also download the code directly and initialize a repository manually.
+
 ## Runing the Application
 
 `.env.dev` files are provided in each application directory for providing development environment variables and quickly running this application, hopefully without any major headaches. 
