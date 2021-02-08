@@ -16,11 +16,11 @@ A chart of the tools and applications used in this tutorial is given below.
 
 [Tags](https://github.com/JacobSNGoodwin/memrizr/tags) are provided at the completion of each application for use as a starting point for the next application.
 
-For example, if you would like to join in for [part2](https://github.com/JacobSNGoodwin/memrizr/releases/tag/part2) where we have completed to Golang API and begin working on the Vue client, you would clone this tag as follows:
+For example, if you would like to join in for the vue portion [vue](https://github.com/JacobSNGoodwin/memrizr/releases/tag/vue) of the app, where we have completed to Golang API and begin working on the Vue client, you would clone this tag as follows:
 
 ```bash
 # Checkout tag, store in folder 'my_memrizr' (creating folder is optional)
-git clone https://github.com/JacobSNGoodwin/memrizr.git --branch part2 --single-branch my_memrizr
+git clone https://github.com/JacobSNGoodwin/memrizr.git --branch vue --single-branch my_memrizr
 
 # Changes into my memrizr
 cd my_memrizer
@@ -43,7 +43,7 @@ This application uses Traefik as a reverse proxy. In `docker-compose.yml`, our `
 
 `127.0.0.1       malcorp.test`
 
-The hosts file can be found (to the best of my knowledge) at `~/etc/hosts` on Mac/Linux or `C:\Windows\System32\drivers\etc` on Windows. 
+The hosts file can be found (to the best of my knowledge) at `/etc/hosts` on Mac/Linux or `C:\Windows\System32\drivers\etc` on Windows. 
 
 ### Run make init
 
