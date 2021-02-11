@@ -1,9 +1,15 @@
 {
   "folders": [
     {
-      "path": "./account"
+      "name": "account",
+      "path": "account"
     },
     {
+      "name": "account-client",
+      "path": "account-client"
+    },
+    {
+      "name": "memrizr",
       "path": "."
     }
   ]
