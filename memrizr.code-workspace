@@ -12,5 +12,8 @@
       "name": "memrizr",
       "path": "."
     }
-  ]
+  ],
+  "settings": {
+    "css.validate": false
+  }
 }
