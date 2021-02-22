@@ -1,0 +1,6 @@
+{
+  "extends": ["eslint:recommended", "plugin:vue/vue3-essential"],
+  "rules": {
+    "no-unused-vars": [1, { "args": "all", "argsIgnorePattern": "^_" }]
+  }
+}

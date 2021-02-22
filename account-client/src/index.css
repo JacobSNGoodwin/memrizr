@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply font-medium py-1 px-4 rounded-full transition-colors duration-200 border-none;
+  }
+
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .btn:focus {
+    @apply outline-none;
+  }
+
+  .btn-blue {
+    @apply bg-blue-500 text-white;
+  }
+
+  .btn-gray {
+    @apply bg-gray-200 text-black text-opacity-70;
+  }
+
+  .btn-blue:hover {
+    @apply bg-blue-600;
+  }
+
+  .btn-gray:hover {
+    @apply bg-gray-300;
+  }
+}
