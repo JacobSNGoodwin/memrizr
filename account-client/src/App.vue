@@ -10,10 +10,14 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { provideAuth } from './store/auth';
 
 // Wrapping exported object in define component
 // gives us typing help! Woot!
 export default defineComponent({
   name: 'App',
+  setup() {
+    provideAuth();
+  },
 });
 </script>
