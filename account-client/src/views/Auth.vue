@@ -17,8 +17,14 @@
           Sign Up
         </li>
       </ul>
-      <LoginForm :isLogin="isLogin" @submitAuth="authSubmitted" />
-      <!-- Submission errors (when we connect to the API) -->
+      <LoginForm
+        :isLogin="isLogin"
+        :isSubmitting="isLoading"
+        @submitAuth="authSubmitted"
+      />
+      <div v-if="error" class="text-center my-2">
+        <p class="text-red-400">{{ error.message }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -34,7 +40,9 @@ export default defineComponent({
   },
   setup() {
     const isLogin = ref(true);
-    const { currentUser, error, isLoading, signin, signup } = useAuth();
+    const { currentUser, error, isLoading, signin, signup } = useAuth({
+      onAuthRoute: '/',
+    });
 
     const setIsLogin = (nextVal) => {
       isLogin.value = nextVal;
