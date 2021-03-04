@@ -1,5 +1,5 @@
-import { reactive, provide, inject, toRefs, readonly, watchEffect } from 'vue';
-import { storeTokens, doRequest, getTokenPayload } from '../util';
+import { reactive, inject, toRefs, readonly, watchEffect } from 'vue';
+import { storeTokens, getTokens, doRequest, getTokenPayload } from '../util';
 import { useRouter } from 'vue-router';
 
 const state = reactive({
@@ -9,42 +9,95 @@ const state = reactive({
   error: null,
 });
 
+const storeSymbol = Symbol();
+
 const signin = async (email, password) =>
   await authenticate(email, password, '/api/account/signin');
 
 const signup = async (email, password) =>
   await authenticate(email, password, '/api/account/signup');
 
-export const authStore = {
-  ...toRefs(readonly(state)),
-  signin,
-  signup,
+const initializeUser = async () => {
+  state.isLoading = true;
+  state.error = null;
+
+  const [idToken, refreshToken] = getTokens();
+
+  const idTokenClaims = getTokenPayload(idToken);
+  const refreshTokenClaims = getTokenPayload(refreshToken);
+
+  if (idTokenClaims) {
+    state.idToken = idToken;
+    state.currentUser = idTokenClaims.user;
+  }
+
+  state.isLoading = false;
+
+  // silently refresh tokens in local storage
+  // if we for some reason don't have refresh token (e.g., if the user deleted it manually)
+  // then we don't proceed
+  if (!refreshTokenClaims) {
+    return;
+  }
+
+  const { data, error } = await doRequest({
+    url: '/api/account/tokens',
+    method: 'post',
+    data: {
+      refreshToken,
+    },
+  });
+
+  if (error) {
+    console.error('Error refreshing tokens\n', error);
+    return;
+  }
+
+  const { tokens } = data;
+  storeTokens(tokens.idToken, tokens.refreshToken);
+
+  const updatedIdTokenClaims = getTokenPayload(tokens.idToken);
+
+  state.currentUser = updatedIdTokenClaims.user;
+  state.idToken = tokens.idToken;
 };
 
-const storeSymbol = Symbol();
+export const createAuthStore = (authStoreOptions) => {
+  const { onAuthRoute, requireAuthRoute } = authStoreOptions || {};
 
-export function provideAuth() {
-  provide(storeSymbol, authStore);
-}
+  const authStore = {
+    ...toRefs(readonly(state)),
+    signin,
+    signup,
+    initializeUser,
+    onAuthRoute,
+    requireAuthRoute,
+  };
 
-export function useAuth(useAuthConfig) {
+  return {
+    authStore,
+    install: (app) => {
+      app.provide(storeSymbol, authStore);
+    },
+  };
+};
+
+export function useAuth() {
   const store = inject(storeSymbol);
 
   if (!store) {
     throw new Error('Auth store has not been instantiated!');
   }
 
-  const { onAuthRoute, requireAuthRoute } = useAuthConfig || {};
-
   const router = useRouter();
 
   watchEffect(() => {
-    if (store.currentUser.value && onAuthRoute) {
-      router.push(onAuthRoute);
+    if (store.currentUser.value && store.onAuthRoute) {
+      router.push(store.onAuthRoute);
     }
 
-    if (!store.currentUser.value && requireAuthRoute) {
-      router.push(requireAuthRoute);
+    if (!store.currentUser.value && store.requireAuthRoute) {
+      router.push(store.requireAuthRoute);
     }
   });
 

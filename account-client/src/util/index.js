@@ -30,10 +30,20 @@ export const doRequest = async (reqOptions) => {
   };
 };
 
+const idTokenKey = '__malcorpId';
+const refreshTokenKey = '__malcorpRf';
+
 // storeTokens utility for storing idAndRefreshToken
 export const storeTokens = (idToken, refreshToken) => {
-  localStorage.setItem('__malcorpId', idToken);
-  localStorage.setItem('__malcorpRf', refreshToken);
+  localStorage.setItem(idTokenKey, idToken);
+  localStorage.setItem(refreshTokenKey, refreshToken);
+};
+
+export const getTokens = () => {
+  return [
+    localStorage.getItem(idTokenKey),
+    localStorage.getItem(refreshTokenKey),
+  ];
 };
 
 // gets the token's payload, and returns null
