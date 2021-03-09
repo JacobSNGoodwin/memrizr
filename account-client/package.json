@@ -9,6 +9,7 @@
   "dependencies": {
     "@vee-validate/rules": "^4.1.19",
     "axios": "^0.21.1",
+    "cropperjs": "^1.5.11",
     "jwt-decode": "^3.1.2",
     "vee-validate": "^4.1.19",
     "vue": "^3.0.5",

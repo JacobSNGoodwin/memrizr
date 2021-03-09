@@ -1,21 +1,16 @@
 <template>
-  <h1 class="text-4xl font-bol text-center">{{ currentUser }}</h1>
+  <UserForm />
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import { useAuth } from '../store/auth';
+import UserForm from '../components/UserForm.vue';
 
-// Wrapping exported object in define component
-// gives us typing help! Woot!
 export default defineComponent({
   name: 'Details',
-  setup() {
-    const { currentUser } = useAuth();
-
-    return {
-      currentUser,
-    };
+  components: {
+    UserForm,
   },
+  setup() {},
 });
 </script>
