@@ -41,7 +41,7 @@ import Cropper from 'cropperjs';
 
 export default defineComponent({
   name: 'ImageCropper',
-  events: ['imageCropped'],
+  emits: ['imageCropped'],
   setup(_props, { emit }) {
     const imageInput = ref(null); // template ref for file input
     const selectedFile = ref(null);
