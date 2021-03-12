@@ -6,6 +6,12 @@ You can find my written tutorials on my [dev.to feed](https://dev.to/jacobsngood
 
 For the complete "prototype" of this application (I'm making several changes in this tutorial), check out the [wordmem repo](https://github.com/JacobSNGoodwin/wordmem).
 
+## Tutorial Concluded
+
+*Due to starting a new professional gig (job), I have decided to conclude the tutorial at the end of the Vue 3 `account-client` portion of the application. Perhaps I should rename the repository to something like "authenticatr." Thanks to all those who have followed along.*
+
+*Hopefully in the future I'll still be able to create some topical tutorials.*
+
 ## Application Overview
 
 A chart of the tools and applications used in this tutorial is given below.
