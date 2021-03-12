@@ -82,6 +82,11 @@ export const storeTokens = (idToken, refreshToken) => {
   localStorage.setItem(refreshTokenKey, refreshToken);
 };
 
+export const removeTokens = () => {
+  localStorage.removeItem(idTokenKey);
+  localStorage.removeItem(refreshTokenKey);
+};
+
 export const getTokens = () => {
   return [
     localStorage.getItem(idTokenKey),

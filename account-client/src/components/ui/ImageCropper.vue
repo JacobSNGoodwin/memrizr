@@ -8,12 +8,19 @@
       class="btn btn-blue w-32 mx-2"
       @click="imageInput.click()"
     >
-      Select Image
+      New Image
     </button>
     <button v-else class="btn btn-blue w-32 mx-2" @click="handleImageCropped">
-      Crop Image
+      Update
     </button>
-    <button class="btn btn-gray w-32 mx-2" @click="fileCleared">Clear</button>
+    <button
+      button
+      v-if="imageSrc"
+      class="btn btn-gray w-32 mx-2"
+      @click="fileCleared"
+    >
+      Cancel
+    </button>
     <input
       type="file"
       ref="imageInput"
@@ -22,9 +29,9 @@
       :style="{ display: 'none' }"
     />
   </div>
-  <div class="my-2 align-baseline text-center">
+  <div v-if="selectedFile" class="my-2 align-baseline text-center">
     <span>Selected File: </span>
-    <span v-if="selectedFile">{{ selectedFile.name }}</span>
+    <span>{{ selectedFile.name }}</span>
   </div>
 </template>
 
@@ -64,6 +71,8 @@ export default defineComponent({
           console.log(blob);
           emit('imageCropped', blob);
         }, 'image/jpeg');
+
+      selectedFile.value = null;
     };
 
     const fileChanged = (e) => {

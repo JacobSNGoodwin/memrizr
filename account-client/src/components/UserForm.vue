@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-3xl mx-auto">
-    <h1 class="text-3xl text-center">Update User</h1>
     <ImageCropper @imageCropped="$emit('imageSubmitted', $event)" />
     <div class="max-w-xl px-4 mx-auto">
       <div class="my-1">
