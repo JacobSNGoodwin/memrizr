@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/rand"
 	"crypto/rsa"
 	"fmt"
 	"log"
@@ -143,4 +144,22 @@ func validateRefreshToken(tokenString string, key string) (*refreshTokenCustomCl
 	}
 
 	return claims, nil
+}
+
+// generatePrivateKey creates a RSA Private Key of specified byte size
+func generatePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
+	// Private Key generation
+	privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate Private Key
+	err = privateKey.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Private Key generated")
+	return privateKey, nil
 }
