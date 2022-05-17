@@ -21,9 +21,15 @@ func TestNewPairFromUser(t *testing.T) {
 	var idExp int64 = 15 * 60
 	var refreshExp int64 = 3 * 24 * 2600
 	priv, _ := ioutil.ReadFile("../rsa_private_test.pem")
-	privKey, _ := jwt.ParseRSAPrivateKeyFromPEM(priv)
+	privKey, err := jwt.ParseRSAPrivateKeyFromPEM(priv)
+	if err != nil {
+		privKey, _ = generatePrivateKey(2048)
+	}
 	pub, _ := ioutil.ReadFile("../rsa_public_test.pem")
-	pubKey, _ := jwt.ParseRSAPublicKeyFromPEM(pub)
+	pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pub)
+	if err != nil {
+		pubKey = &privKey.PublicKey
+	}
 	secret := "anotsorandomtestsecret"
 
 	mockTokenRepository := new(mocks.MockTokenRepository)
@@ -235,9 +241,15 @@ func TestValidateIDToken(t *testing.T) {
 	var idExp int64 = 15 * 60
 
 	priv, _ := ioutil.ReadFile("../rsa_private_test.pem")
-	privKey, _ := jwt.ParseRSAPrivateKeyFromPEM(priv)
+	privKey, err := jwt.ParseRSAPrivateKeyFromPEM(priv)
+	if err != nil {
+		privKey, _ = generatePrivateKey(2048)
+	}
 	pub, _ := ioutil.ReadFile("../rsa_public_test.pem")
-	pubKey, _ := jwt.ParseRSAPublicKeyFromPEM(pub)
+	pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pub)
+	if err != nil {
+		pubKey = &privKey.PublicKey
+	}
 
 	// instantiate a common token service to be used by all tests
 	tokenService := NewTokenService(&TSConfig{
